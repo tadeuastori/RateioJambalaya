@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "party-apportionment": {
+    "RateioJambalaya": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:application": {
@@ -17,7 +17,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "outputPath": "dist/party-apportionment",
+            "outputPath": "dist/RateioJambalaya",
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
@@ -68,10 +68,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "party-apportionment:build:production"
+              "browserTarget": "RateioJambalaya:build:production"
             },
             "development": {
-              "browserTarget": "party-apportionment:build:development"
+              "browserTarget": "RateioJambalaya:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -79,7 +79,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "party-apportionment:build"
+            "browserTarget": "RateioJambalaya:build"
           }
         },
         "test": {
@@ -102,5 +102,5 @@
       }
     }
   },
-  "defaultProject": "party-apportionment"
+  "defaultProject": "RateioJambalaya"
 }
