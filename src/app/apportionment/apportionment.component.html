@@ -1,0 +1,344 @@
+<form [formGroup]="apportionmentForm">
+  <div
+    class="accordion"
+    id="accordionExample"
+  >
+  
+  <div class="accordion-item">
+      <div class="titulo">
+          <div>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512" class="img">
+                <path d="M639.4 433.6c-8.374-20.37-31.75-30.12-52.12-21.62l-22.12 9.249l-38.75-101.1c47.87-34.1 64.87-100.2 34.5-152.7l-86.62-150.5c-7.999-13.87-24.1-19.75-39.1-13.62l-114.2 47.37L205.8 2.415C190.8-3.71 173.8 2.165 165.8 16.04L79.15 166.5C48.9 219 65.78 284.3 113.6 319.2l-38.75 101.9L52.78 411.9c-20.37-8.499-43.62 1.25-52.12 21.62c-1.75 4.124 .125 8.749 4.25 10.5l162.4 67.37c3.1 1.75 8.624-.125 10.37-4.249c8.374-20.37-1.25-43.87-21.62-52.37l-22.12-9.124l39.37-103.6c4.5 .4999 8.874 1.25 13.12 1.25c51.75 0 99.37-32.1 113.4-85.24l20.25-75.36l20.25 75.36c13.1 52.24 61.62 85.24 113.4 85.24c4.25 0 8.624-.7499 13.12-1.25l39.25 103.6l-22.12 9.124c-20.37 8.499-30.12 31.1-21.62 52.37c1.75 4.124 6.5 5.999 10.5 4.249l162.4-67.37C639.1 442.2 641.1 437.7 639.4 433.6zM275.9 162.1L163.8 115.6l36.5-63.37L294.8 91.4L275.9 162.1zM364.1 162.1l-18.87-70.74l94.49-39.12l36.5 63.37L364.1 162.1z"/>
+            </svg>
+          </div>
+        <div class="texto">
+            <h1>Le Rateio dans baguncas du Le 495</h1>
+            <h5>Jambalaya... alaya.. alaya...</h5>
+        </div>        
+      </div>      
+    </div>
+
+    <ng-container formArrayName="eventos">
+      <div class="accordion-item">
+        <h2 class="accordion-header" id="headingOne">
+          <button
+            class="accordion-button"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#collapseOne"
+            aria-expanded="true"
+            aria-controls="collapseOne"
+            [disabled]="true"
+          >
+            #1 - Evento
+          </button>
+        </h2>
+        <div
+          id="collapseOne"
+          class="accordion-collapse collapse show"
+          aria-labelledby="headingOne"
+        >
+          <div class="accordion-body">
+            <ng-container
+              *ngFor="let eventoForm of getEventos().controls; let x = index"
+            >
+              <div class="input-group  md-3 evento" [formGroupName]="x">
+                <span class="input-group-text" id="basic-addon1">{{
+                  x + 1
+                }}</span>
+                <input
+                  type="text"
+                  class="form-control"
+                  formControlName="nomeEvento"
+                  id="floatingInput"
+                  placeholder="Evento"
+                />
+                <button
+                  class="btn btn-outline-danger"
+                  type="button"
+                  (click)="removeEvento(x)"
+                  *ngIf="getEventos().controls.length > 1"
+                >
+                  Remover
+                </button>
+              </div>
+            </ng-container>
+
+            <button type="button" class="btn btn-primary btn_left" (click)="addEvento()">
+              Add Evento
+            </button>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+
+    <ng-container formArrayName="eventos">
+      <div class="accordion-item">
+        <h2 class="accordion-header" id="headingTwo">
+          <button
+            class="accordion-button"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#collapseTwo"
+            aria-expanded="true"
+            aria-controls="collapseTwo"
+            [disabled]="true"
+          >
+            #2 - Participantes
+          </button>
+        </h2>
+        <div
+          id="collapseTwo"
+          class="accordion-collapse collapse show"
+          aria-labelledby="headingTwo"
+        >
+
+        <div class="accordion-body" *ngIf="!hasEventos()">
+            <span>Adicione um evento para continuar</span>
+        </div>
+
+          <div class="accordion-body" *ngIf="hasEventos()">
+            <ng-container>
+              <ng-container
+                *ngFor="
+                  let eventoForm of getFilteredEventos();
+                  let idxEvento = index
+                "
+              >
+                <ng-container [formGroupName]="idxEvento">
+                    <div class="card participante">
+                        <div class="card-header">
+                            {{ idxEvento+1 + ' - ' + eventoForm.get("nomeEvento")?.value }}
+                        </div>
+                        <div class="card-body">
+                            <ng-container formArrayName="participantes">
+                                <ng-container
+                                  *ngFor="
+                                    let participanteForm of getParticipantes(idxEvento)
+                                      ?.controls;
+                                    let idxParticipante = index
+                                  "
+                                >
+                                  <div
+                                    class="input-group md-3 participante"
+                                    [formGroupName]="idxParticipante"
+                                  >
+                                    <span class="input-group-text" id="basic-addon1">{{
+                                      idxParticipante + 1
+                                    }}</span>
+                                    <input
+                                      type="text"
+                                      class="form-control"
+                                      placeholder="Pessoa / Apartamento"
+                                      formControlName="nomeParticipante"
+                                      (change)="sumContribuicaoParticipante(idxEvento, idxParticipante)"
+                                    />
+                                    <button
+                                      class="btn btn-outline-danger"
+                                      type="button"
+                                      (click)="
+                                        removeParticipante(idxEvento, idxParticipante)
+                                      "
+                                      *ngIf="
+                                        getParticipantes(idxEvento).controls.length > 1
+                                      "
+                                    >
+                                      Remover
+                                    </button>
+                                  </div>
+                                </ng-container>
+                              </ng-container>
+                        </div>
+                        <div class="card-footer">
+                            <button
+                                type="button"
+                                class="btn btn-primary"
+                                (click)="addParticipante(idxEvento)"
+                            >
+                                Add participante - {{eventoForm.get("nomeEvento")?.value}}
+                            </button>
+                        </div>
+                    </div>
+
+                </ng-container>
+              </ng-container>              
+            </ng-container>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+
+    <ng-container formArrayName="eventos">
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="headingThree">
+              <button
+                class="accordion-button"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#collapseThree"
+                aria-expanded="false"
+                aria-controls="collapseThree"
+                [disabled]="true"
+              >
+                #3 - Consumos
+              </button>
+            </h2>
+            <div
+              id="collapseThree"
+              class="accordion-collapse collapse show"
+              aria-labelledby="headingThree"
+            >
+            <div class="accordion-body" *ngIf="!hasEventos()">
+                <span>Adicione um participante para continuar</span>
+            </div>
+    
+              <div class="accordion-body" *ngIf="hasEventos()">
+                
+                <ng-container *ngFor="let eventoForm of getFilteredEventos(); let idxEvento = index">
+                    <ng-container [formGroupName]="idxEvento">
+                        <div class="card participante">
+                            <div class="card-header">
+                                {{ idxEvento+1 + ' - ' + eventoForm.get("nomeEvento")?.value }}
+                            </div>
+
+                            <div class="card-body" *ngIf="!hasParticipante(idxEvento)">
+                                <span>Adicione um participante para continuar</span>
+                            </div>
+
+                            <div class="card-body"  *ngIf="hasParticipante(idxEvento)">
+                                <ng-container formArrayName="participantes">
+                                    <ng-container *ngFor=" let participanteForm of getFilteredParticipantes(idxEvento); let idxParticipante = index">
+                                        <ng-container [formGroupName]="idxParticipante">
+                                            <div class="card participante">
+                                                <div class="card-header">
+                                                    <div class="input-group">
+                                                        <span class="input-group-text">{{'Participante - ' + participanteForm.get('nomeParticipante')?.value}}</span>                                            
+                                                        <input type="number" [readonly]="hasItems(idxEvento, idxParticipante)" formControlName="valorContribuido" class="form-control" placeholder="Valor Total Investido no Rolê (com taxas)" aria-label="Dollar amount (with dot and two decimal places)"  (change)="sumContribuicaoParticipante(idxEvento, idxParticipante)">
+                                                        <span class="input-group-text">$</span>
+                                                      </div>
+                                                </div>
+                                                <div class="card-body" *ngIf="hasItems(idxEvento, idxParticipante)">
+                                                    <div class="card">
+                                                    <ng-container formArrayName="itemsFornecidos">    
+                                                        <ng-container *ngFor=" let itemForm of getItems(idxEvento, idxParticipante)?.controls; let idxItem = index">
+                                                            <ng-container [formGroupName]="idxItem">
+                                                                <div class="card-body">
+                                                                    <div class="input-group">
+                                                                        <span class="input-group-text">{{ idxItem+1}}</span>                                            
+                                                                        <input type="text" formControlName="nomeItem" class="form-control" placeholder="Item" aria-label="Name of item">
+                                                                        <input type="number" formControlName="valorItem" class="form-control" placeholder="Valor item" aria-label="Dollar amount (with dot and two decimal places)" (change)="sumContribuicaoParticipante(idxEvento, idxParticipante)">
+                                                                        <span class="input-group-text">$</span>
+                                                                        <div class="input-group-text">
+                                                                            <span class="taxas">Adicionar Taxas?</span>
+                                                                            <input class="form-check-input mt-0" type="checkbox" formControlName="addTaxas" value="" aria-label="Checkbox for following text input" (change)="sumContribuicaoParticipante(idxEvento, idxParticipante)">
+                                                                        </div>  
+
+                                                                        <button class="btn btn-outline-danger" type="button" id="button-addon1" (click)="removeItem(idxEvento, idxParticipante, idxItem)">Remover</button>
+                                                                      </div>
+                                                                   </div>
+                                                            </ng-container>                                                            
+                                                        </ng-container>    
+                                                    </ng-container>
+                                                   </div>
+    
+                                                </div>
+                                                <div class="card-footer">
+                                                    <button
+                                                        type="button"
+                                                        class="btn btn-primary"
+                                                        (click)="addItem(idxEvento, idxParticipante)">
+                                                        Add Item
+                                                    </button>
+                                                    <button
+                                                        type="button"
+                                                        class="btn btn-danger"
+                                                        (click)="removeItens(idxEvento, idxParticipante)"
+                                                        *ngIf="hasItems(idxEvento, idxParticipante)">
+                                                        Remover Todos Itens
+                                                    </button>
+                                                </div>
+                                            </div>
+
+                                        </ng-container>                                        
+                                    </ng-container>
+                                </ng-container>
+                            </div>
+                        </div>
+                    </ng-container>                    
+                </ng-container>
+
+              </div>
+            </div>
+          </div>
+    </ng-container>
+
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="headingFour">
+        <button
+          class="accordion-button collapse show"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#collapseFour"
+          aria-expanded="true"
+          aria-controls="collapseFour"
+        >
+          #4 - Rateio
+        </button>
+      </h2>
+      <div
+        id="collapseFour"
+        class="accordion-collapse collapse show"
+        aria-labelledby="headingFour"
+      >
+        <div class="accordion-body" *ngIf="!hasEventos()">
+            <span>Adicione um evento para continuar</span>
+        </div>
+
+        <div class="accordion-body" *ngIf="hasEventos()">
+
+            <ng-container formArrayName="eventos">
+                <ng-container *ngFor="let eventoForm of getFilteredEventos(); let idxEvento = index">
+                    <ng-container [formGroupName]="idxEvento">
+                        <div class="card participante">
+                            <div class="card-header">{{eventoForm.get("nomeEvento")?.value}}</div>
+                            <div class="card-body">
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>Participante</th>
+                                            <th>Valor Contribuido</th>
+                                            <th>Valor a acertar</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="table-group-divider">
+                                        <ng-container formArrayName="participantes">
+                                            <ng-container *ngFor=" let participanteForm of getFilteredParticipantes(idxEvento); let idxParticipante = index">
+                                                <ng-container [formGroupName]="idxParticipante">
+                                                    <tr>
+                                                        <td>{{participanteForm.get('nomeParticipante')?.value}}</td>
+                                                        <td>{{participanteForm.get('valorContribuido')?.value}}</td>
+                                                        <td>
+                                                            {{participanteForm.get('rateio')?.value}}             
+                                                        </td>
+                                                    </tr>
+                                                </ng-container>
+                                            </ng-container>
+                                        </ng-container>
+                                    </tbody>
+                                    <tfoot>
+                                    </tfoot>
+                                </table>                                
+                            </div>
+                            <div class="card-footer">
+                                <span>Total do evento - {{eventoForm.get("valorEvento")?.value | number}} $</span>                                
+                            </div>
+                        </div>
+                    </ng-container>
+                </ng-container>
+            </ng-container>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</form>

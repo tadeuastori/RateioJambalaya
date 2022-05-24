@@ -1,0 +1,33 @@
+.accordion .titulo{
+    margin-left: 5rem;
+    margin-top: 3rem;
+    margin-bottom: 3rem;
+    display: flex;
+}
+
+.accordion .titulo .texto{
+    margin-left: 2rem;
+}
+
+.accordion .titulo .img{
+    width: 5rem;
+    height: 5rem;
+    display: flex;
+}
+
+.accordion .evento{
+    margin-bottom: 1rem;
+}
+
+.accordion .participante{
+    margin-bottom: 1rem;
+}
+
+.btn{
+    margin-right: 1rem;
+}
+
+.taxas{
+    margin-left: 1rem;
+    margin-right: 0.5rem;
+}
