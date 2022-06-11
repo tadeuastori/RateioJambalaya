@@ -9,7 +9,7 @@ import { FormGroup, FormArray, FormBuilder, FormControl } from '@angular/forms';
 export class ApportionmentComponent implements OnInit {
 
   version: string = "v2.0";
-  debugMode: boolean = true;
+  debugMode: boolean = false;
   apportionmentForm: FormGroup;
 
   constructor(private fb: FormBuilder) {  }
