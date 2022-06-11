@@ -8,6 +8,8 @@ import { FormGroup, FormArray, FormBuilder, FormControl } from '@angular/forms';
 })
 export class ApportionmentComponent implements OnInit {
 
+  version: string = "v2.0";
+  debugMode: boolean = true;
   apportionmentForm: FormGroup;
 
   constructor(private fb: FormBuilder) {  }
@@ -25,17 +27,9 @@ export class ApportionmentComponent implements OnInit {
 
     eventos.push(this.fb.group({
       nomeEvento: null,
-      valorEvento: 0.00,
+      valorEvento: 0.00,      
+      qtdDiasEvento: 1,
       participantes: this.fb.array([])
-    }));
-
-    const participantes = eventos.at(0).get('participantes') as FormArray;
-
-    participantes.push(this.fb.group({
-      nomeParticipante: null,
-      valorContribuido: null,
-      itemsFornecidos: this.fb.array([]),
-      rateio: null
     }));
   }
 
@@ -46,7 +40,7 @@ export class ApportionmentComponent implements OnInit {
   }
 
   getFilteredEventos() {
-    return this.getEventos().controls.filter(x => x.get('nomeEvento')?.value != null);
+    return this.getEventos().controls.filter(x => x.get('nomeEvento')?.value != null && x.get('qtdDiasEvento')?.value != null);
   }
 
   getParticipantes(index: number) {
@@ -54,7 +48,7 @@ export class ApportionmentComponent implements OnInit {
   }
 
   getFilteredParticipantes(idxEvento: number) {
-    return this.getParticipantes(idxEvento).controls.filter(x => x.get('nomeParticipante')?.value != null);
+    return this.getParticipantes(idxEvento).controls.filter(x => x.get('nomeParticipante')?.value != null && x.get('qtdDiasParticipou')?.value != null);
   }
 
   getItems(idxEvento: number, idxParticipante: number){
@@ -64,11 +58,11 @@ export class ApportionmentComponent implements OnInit {
 
 
   hasEventos(){
-    return this.getEventos()?.controls.filter(x => x.get('nomeEvento')?.value != null && x.get('nomeEvento')?.value.length > 0).length > 0
+    return this.getEventos()?.controls.filter(x => x.get('nomeEvento')?.value != null && x.get('qtdDiasEvento')?.value != null && x.get('nomeEvento')?.value.length > 0).length > 0
   }
 
   hasParticipante(idxEvento: number){
-    return this.getParticipantes(idxEvento)?.controls.filter(x => x.get('nomeParticipante')?.value != null && x.get('nomeParticipante')?.value.length > 0).length > 0
+    return this.getParticipantes(idxEvento)?.controls.filter(x => x.get('nomeParticipante')?.value != null && x.get('qtdDiasParticipou')?.value != null && x.get('nomeParticipante')?.value.length > 0).length > 0
   }
 
   hasItems(idxEvento: number, idxParticipante: number){
@@ -80,21 +74,21 @@ export class ApportionmentComponent implements OnInit {
   addEvento() {
     const eventoFrom = this.fb.group({
       nomeEvento: null,
-      valorEvento: 0.00,
+      valorEvento: 0.00,      
+      qtdDiasEvento: 1,
       participantes: this.fb.array([])
     });
 
     this.getEventos().push(eventoFrom);
-    const idxPartic = this.getEventos().length-1;
-    this.addParticipante(idxPartic);
   }
 
-  addParticipante(index: number) {
+  addParticipante(index: number, qtdDiasEvento: number) {
     const participanteFrom = this.fb.group({
-      nomeParticipante: null,
-      itemsFornecidos: this.fb.array([]),
+      nomeParticipante: null,      
       valorContribuido: null,
-      rateio: null
+      rateio: null,
+      qtdDiasParticipou: qtdDiasEvento,
+      itemsFornecidos: this.fb.array([])
     });
 
     this.getParticipantes(index).push(participanteFrom);
@@ -104,7 +98,7 @@ export class ApportionmentComponent implements OnInit {
   addItem(idxEvento: number, idxParticipante: number){
     const itemFrom = this.fb.group({
       nomeItem: null,
-      valorItem: 0.00,
+      valorItem: null,
       addTaxas: false
     });
 
@@ -204,39 +198,81 @@ export class ApportionmentComponent implements OnInit {
     }
 
     const vlrEvento = Number(this.getFilteredEventos()[idxEvento].get('valorEvento')?.value);
+    const qtdDiasEvento = Number(this.getFilteredEventos()[idxEvento].get('qtdDiasEvento')?.value);
+    const vlrEventoDia = vlrEvento / qtdDiasEvento;
+
     const qtdParticipante = this.getFilteredParticipantes(idxEvento).length;
     const totalRateio = vlrEvento / qtdParticipante;
+    const qtdCota = this.getFilteredParticipantes(idxEvento).reduce((sum, x) => { return Number(sum) + Number(x.get("qtdDiasParticipou")?.value) }, 0);
 
     for (let index = 0; index < this.getFilteredParticipantes(idxEvento).length; index++) {
-      const element = this.getFilteredParticipantes(idxEvento)[index];
+      const participante = this.getFilteredParticipantes(idxEvento)[index];
       rateio = '';
 
-      if(!element.get('valorContribuido')?.value){
+      if(this.getFilteredParticipantes(idxEvento).filter(x => x.get("qtdDiasParticipou")?.value != qtdDiasEvento).length == 0) {
 
-        if(!!vlrEvento){
-          rateio = String(totalRateio.toFixed(2)) + '$ a contribuir';
-        }         
+        if(!participante.get('valorContribuido')?.value){
+
+          if(!!vlrEvento){
+            rateio = String(totalRateio.toFixed(2)) + ' $ a contribuir';
+          }          
+          
+        } else {  
+  
+          if(Number(participante.get('valorContribuido')?.value) > totalRateio){
+            rateio = String((Number(participante.get('valorContribuido')?.value) - totalRateio).toFixed(2)) + ' $ a receber';
+          }  
+          if(Number(participante.get('valorContribuido')?.value) < totalRateio){
+            rateio = String((totalRateio - Number(participante.get('valorContribuido')?.value)).toFixed(2)) + ' $ a contribuir';
+          }  
+          if(Number(participante.get('valorContribuido')?.value) == totalRateio){
+            rateio = 'Deu bom';
+          }
+                 
+        }
 
       } else {
 
+        const vlrValorCota = vlrEvento / qtdCota;
 
-        if(Number(element.get('valorContribuido')?.value) > totalRateio){
-          rateio = String((Number(element.get('valorContribuido')?.value) - totalRateio).toFixed(2)) + '$ a receber';
+        if(!participante.get('valorContribuido')?.value){
+
+          if(!!vlrEvento){
+            rateio = String((vlrValorCota * Number(participante.get("qtdDiasParticipou")?.value)).toFixed(2)) + ' $ a contribuir';
+          }          
+          
+        } else {  
+
+        if(Number(participante.get('valorContribuido')?.value) > (vlrValorCota * Number(participante.get("qtdDiasParticipou")?.value))){
+          rateio = String((Number(participante.get('valorContribuido')?.value) - (vlrValorCota * Number(participante.get("qtdDiasParticipou")?.value))).toFixed(2)) + ' $ a receber';
+        }  
+
+        if(Number(participante.get('valorContribuido')?.value) < (vlrValorCota * Number(participante.get("qtdDiasParticipou")?.value))){
+          rateio = String(((vlrValorCota * Number(participante.get("qtdDiasParticipou")?.value)) - Number(participante.get('valorContribuido')?.value)).toFixed(2)) + ' $ a contribuir';
         }
 
-        if(Number(element.get('valorContribuido')?.value) < totalRateio){
-          rateio = String((totalRateio - Number(element.get('valorContribuido')?.value)).toFixed(2)) + '$ a contribuir';
-        }
-
-        if(Number(element.get('valorContribuido')?.value) == totalRateio){
+        if(Number(participante.get('valorContribuido')?.value) == (vlrValorCota * Number(participante.get("qtdDiasParticipou")?.value))){
           rateio = 'Deu bom';
-        }
+        } 
+                 
+        }        
 
-      }
+      }   
 
-      element.get('rateio')?.patchValue(rateio);
+      participante.get('rateio')?.patchValue(rateio);
     }
 
+  }
+
+  lstQtdDiasEvento(idxEvento: number) : Array<null> {
+    return new Array(Number(this.getFilteredEventos()[idxEvento]?.get("qtdDiasEvento")?.value));
+  }
+
+  checkBadge(texto: string, procurar: string){
+
+    if(!texto || !procurar) return
+
+    return texto.includes(procurar);
   }
 
 }

@@ -1,10 +1,10 @@
-<form [formGroup]="apportionmentForm">
+<form [formGroup]="apportionmentForm">  
   <div
     class="accordion"
     id="accordionExample"
   >
   
-  <div class="accordion-item">
+    <div class="accordion-item">
       <div class="titulo">
           <div>
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512" class="img">
@@ -18,6 +18,7 @@
       </div>      
     </div>
 
+    <!-- EVENTOS -->
     <ng-container formArrayName="eventos">
       <div class="accordion-item">
         <h2 class="accordion-header" id="headingOne">
@@ -53,6 +54,14 @@
                   id="floatingInput"
                   placeholder="Evento"
                 />
+                <label class="input-group-text" for="EventoSelect01">Qtd dias Evento</label>
+                <select class="form-select" id="EventoSelect01" formControlName="qtdDiasEvento">
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
+                </select>
                 <button
                   class="btn btn-outline-danger"
                   type="button"
@@ -65,13 +74,14 @@
             </ng-container>
 
             <button type="button" class="btn btn-primary btn_left" (click)="addEvento()">
-              Add Evento
+              Add Outro Evento
             </button>
           </div>
         </div>
       </div>
     </ng-container>
 
+    <!-- PARTICIPANTES -->
     <ng-container formArrayName="eventos">
       <div class="accordion-item">
         <h2 class="accordion-header" id="headingTwo">
@@ -95,7 +105,7 @@
 
         <div class="accordion-body" *ngIf="!hasEventos()">
             <span>Adicione um evento para continuar</span>
-        </div>
+        </div>       
 
           <div class="accordion-body" *ngIf="hasEventos()">
             <ng-container>
@@ -111,6 +121,11 @@
                             {{ idxEvento+1 + ' - ' + eventoForm.get("nomeEvento")?.value }}
                         </div>
                         <div class="card-body">
+
+                            <div class="accordion-body" *ngIf="getParticipantes(idxEvento).length == 0">
+                              <span>Adicione um participante para continuar</span>
+                            </div>
+
                             <ng-container formArrayName="participantes">
                                 <ng-container
                                   *ngFor="
@@ -133,14 +148,15 @@
                                       formControlName="nomeParticipante"
                                       (change)="sumContribuicaoParticipante(idxEvento, idxParticipante)"
                                     />
+                                    <label class="input-group-text" for="ParticipanteSelect01">Qtd dias Participou</label>
+                                    <select class="form-select" id="ParticipanteSelect01" formControlName="qtdDiasParticipou" (change)="sumContribuicaoParticipante(idxEvento, idxParticipante)">
+                                        <option *ngFor="let dia of lstQtdDiasEvento(idxEvento); let idxDia = index" value="{{idxDia+1}}">{{idxDia+1}}</option>
+                                    </select>
                                     <button
                                       class="btn btn-outline-danger"
                                       type="button"
                                       (click)="
                                         removeParticipante(idxEvento, idxParticipante)
-                                      "
-                                      *ngIf="
-                                        getParticipantes(idxEvento).controls.length > 1
                                       "
                                     >
                                       Remover
@@ -153,7 +169,7 @@
                             <button
                                 type="button"
                                 class="btn btn-primary"
-                                (click)="addParticipante(idxEvento)"
+                                (click)="addParticipante(idxEvento, eventoForm.get('qtdDiasEvento')?.value)"
                             >
                                 Add participante - {{eventoForm.get("nomeEvento")?.value}}
                             </button>
@@ -168,6 +184,7 @@
       </div>
     </ng-container>
 
+    <!-- INVESTIMENTO -->
     <ng-container formArrayName="eventos">
         <div class="accordion-item">
             <h2 class="accordion-header" id="headingThree">
@@ -180,7 +197,7 @@
                 aria-controls="collapseThree"
                 [disabled]="true"
               >
-                #3 - Consumos
+                #3 - Investimento
               </button>
             </h2>
             <div
@@ -213,7 +230,7 @@
                                                 <div class="card-header">
                                                     <div class="input-group">
                                                         <span class="input-group-text">{{'Participante - ' + participanteForm.get('nomeParticipante')?.value}}</span>                                            
-                                                        <input type="number" [readonly]="hasItems(idxEvento, idxParticipante)" formControlName="valorContribuido" class="form-control" placeholder="Valor Total Investido no Rolê (com taxas)" aria-label="Dollar amount (with dot and two decimal places)"  (change)="sumContribuicaoParticipante(idxEvento, idxParticipante)">
+                                                        <input style="text-align: right; background-color: ghostwhite;" type="number" [readonly]="true" formControlName="valorContribuido" class="form-control" placeholder="Valor Total Investido no Rolê" aria-label="Dollar amount (with dot and two decimal places)">
                                                         <span class="input-group-text">$</span>
                                                       </div>
                                                 </div>
@@ -226,7 +243,7 @@
                                                                     <div class="input-group">
                                                                         <span class="input-group-text">{{ idxItem+1}}</span>                                            
                                                                         <input type="text" formControlName="nomeItem" class="form-control" placeholder="Item" aria-label="Name of item">
-                                                                        <input type="number" formControlName="valorItem" class="form-control" placeholder="Valor item" aria-label="Dollar amount (with dot and two decimal places)" (change)="sumContribuicaoParticipante(idxEvento, idxParticipante)">
+                                                                        <input style="text-align: right;" type="number" formControlName="valorItem" class="form-control" placeholder="Valor item" aria-label="Dollar amount (with dot and two decimal places)" (input)="sumContribuicaoParticipante(idxEvento, idxParticipante)">
                                                                         <span class="input-group-text">$</span>
                                                                         <div class="input-group-text">
                                                                             <span class="taxas">Adicionar Taxas?</span>
@@ -247,7 +264,7 @@
                                                         type="button"
                                                         class="btn btn-primary"
                                                         (click)="addItem(idxEvento, idxParticipante)">
-                                                        Add Item
+                                                        Add Item / Nota Fiscal
                                                     </button>
                                                     <button
                                                         type="button"
@@ -272,6 +289,7 @@
           </div>
     </ng-container>
 
+    <!-- RATEIO -->
     <div class="accordion-item">
       <h2 class="accordion-header" id="headingFour">
         <button
@@ -308,6 +326,7 @@
                                             <th>Participante</th>
                                             <th>Valor Contribuido</th>
                                             <th>Valor a acertar</th>
+                                            <th>Participou em (dias)</th>
                                         </tr>
                                     </thead>
                                     <tbody class="table-group-divider">
@@ -316,10 +335,14 @@
                                                 <ng-container [formGroupName]="idxParticipante">
                                                     <tr>
                                                         <td>{{participanteForm.get('nomeParticipante')?.value}}</td>
-                                                        <td>{{participanteForm.get('valorContribuido')?.value}}</td>
-                                                        <td>
-                                                            {{participanteForm.get('rateio')?.value}}             
-                                                        </td>
+                                                        <td>{{participanteForm.get('valorContribuido')?.value}} <span *ngIf="participanteForm.get('valorContribuido')?.value">$</span></td>
+                                                        <td style="vertical-align: middle;">                                                            
+                                                            <span class="badge rounded-pill text-bg-primary" style="width: 1rem; height:1rem; margin-right:0.5rem; display: inline-flex;" *ngIf="checkBadge(participanteForm.get('rateio')?.value, 'Deu bom')"></span>
+                                                            <span class="badge rounded-pill text-bg-success" style="width: 1rem; height:1rem; margin-right:0.5rem; display: inline-flex;" *ngIf="checkBadge(participanteForm.get('rateio')?.value, 'receber')"></span>
+                                                            <span class="badge rounded-pill text-bg-warning" style="width: 1rem; height:1rem; margin-right:0.5rem; display: inline-flex;" *ngIf="checkBadge(participanteForm.get('rateio')?.value, 'contribuir')"></span>
+                                                            <span>{{participanteForm.get('rateio')?.value}}</span>                                                            
+                                                        </td> 
+                                                        <td>{{participanteForm.get('qtdDiasParticipou')?.value}}</td>
                                                     </tr>
                                                 </ng-container>
                                             </ng-container>
@@ -330,7 +353,7 @@
                                 </table>                                
                             </div>
                             <div class="card-footer">
-                                <span>Total do evento - {{eventoForm.get("valorEvento")?.value | number}} $</span>                                
+                                <span>Foi investido {{eventoForm.get("valorEvento")?.value | number}} $ em {{eventoForm.get("qtdDiasEvento")?.value | number}} dia(s) de felicidade</span>
                             </div>
                         </div>
                     </ng-container>
@@ -340,5 +363,36 @@
         </div>
       </div>
     </div>
+
+    <div class="accordion-item" *ngIf="debugMode">
+      <h2 class="accordion-header" id="headingFour">
+        <button
+          class="accordion-button collapse show"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#collapseFour"
+          aria-expanded="true"
+          aria-controls="collapseFour"
+        >
+          #5 - Debug Panel
+        </button>
+      </h2>
+      <div
+        id="collapseFive"
+        class="accordion-collapse collapse show"
+        aria-labelledby="headingFive"
+      >
+        <div class="accordion-body">
+          <div>
+            <h4>Objeto completo</h4>
+            <pre><p>{{apportionmentForm.get("eventos")?.value | json}}</p></pre>
+            <hr>
+          </div>          
+        </div>
+      </div>
+    </div>
   </div>
+  <div class="badge text-bg-light" >
+    Version <span class="badge text-bg-secondary">{{version}}</span>
+  </div>      
 </form>
