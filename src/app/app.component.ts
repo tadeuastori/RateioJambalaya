@@ -1,5 +1,6 @@
 import { Component, OnInit, HostListener } from '@angular/core';
 import { Item, ApiService } from './services/api.service';
+import { DeviceDetectorService } from 'ngx-device-detector';
 
 @Component({
   selector: 'app-root',
@@ -10,14 +11,14 @@ import { Item, ApiService } from './services/api.service';
 export class AppComponent implements OnInit {
   title = 'RateioJambalaya';
   items: Array<Item>;
-
+  deviceInfo: any;
   deferredPrompt: any;
   showButton = false;
 
   @HostListener('window:beforeinstallprompt', ['$event'])
 
   onbeforeinstallprompt(e) {
-    console.log(e);
+    console.log('teste ' + e);
     // Prevent Chrome 67 and earlier from automatically showing the prompt
     e.preventDefault();
     // Stash the event so it can be triggered later.
@@ -25,10 +26,16 @@ export class AppComponent implements OnInit {
     this.showButton = true;
   }
 
-
-  constructor(private apiService: ApiService) { }
+  constructor(private apiService: ApiService, private deviceService: DeviceDetectorService) { }
 
   ngOnInit() {
+
+    if(this.deviceService.isMobile()){
+      this.showButton = true;
+    } else {
+      this.showButton = false;
+    }
+
     this.fetchData();
   }
 
@@ -53,7 +60,7 @@ export class AppComponent implements OnInit {
   fetchData() {
     this.apiService.fetch().subscribe(
       (data: Array<Item>) => {
-        console.log(data);
+        // console.log(data);
         this.items = data;
       }, (err) => {
         console.log(err);

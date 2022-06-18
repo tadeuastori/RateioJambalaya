@@ -1,0 +1,18 @@
+.add-btn {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    box-sizing: border-box;
+    margin: 0rem auto;
+    display: inline-block;
+}
+
+.add-btn button {
+    width: 100%;
+}
+
+.div-img{        
+    width: 2rem;
+    height: 2rem;
+    margin-right: 1rem;    
+}
