@@ -16,29 +16,33 @@ export class AppComponent implements OnInit {
   deviceInfo: any;
   deferredPrompt: any;
   showButton = false;
+  pwaControl = false;
 
   @HostListener('window:beforeinstallprompt', ['$event'])
 
   onBeforeInstallPrompt(e) {
-    console.log('teste ' + e);
+    console.log('PWA was available');
     // Prevent Chrome 67 and earlier from automatically showing the prompt
     e.preventDefault();
     // Stash the event so it can be triggered later.
     this.deferredPrompt = e;
-    this.showButton = true;
+    
+    this.pwaControl = true;
+    this.checkBrowser();
   }
 
   onAppInstalled(e) {
-    e.hide();
     this.deferredPrompt = null;
-    this.showButton = false;
     console.log('PWA was installed');
+
+    this.pwaControl = true;
+    this.checkBrowser();
   }
 
 
   constructor(private apiService: ApiService, private deviceService: DeviceDetectorService, private swUpdate: SwUpdate) { 
     // force update
-    this.swUpdate.available.subscribe((event) => {
+    this.swUpdate.available.subscribe((e) => {
       window.location.reload();
     });
 
@@ -46,16 +50,12 @@ export class AppComponent implements OnInit {
       'beforeinstallprompt',
       this.onBeforeInstallPrompt.bind(this)
     );
+
     window.addEventListener('appinstalled', this.onAppInstalled.bind(this));
   }
 
   ngOnInit() {
-    if(this.deviceService.isMobile()){
-      this.showButton = true;
-    } else {
-      this.showButton = false;
-    }
-
+    this.checkBrowser();
     this.fetchData();
   }
 
@@ -86,6 +86,18 @@ export class AppComponent implements OnInit {
         console.log(err);
       }
     );
+  }
+
+  checkBrowser(){
+    if(this.pwaControl){
+      if(this.deviceService.isMobile()){
+        this.showButton = true;
+      } else {
+        this.showButton = false;
+      }
+    } else {
+      this.showButton = false;
+    }    
   }
 
 }
