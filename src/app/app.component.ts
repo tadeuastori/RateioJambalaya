@@ -1,6 +1,8 @@
 import { Component, OnInit, HostListener } from '@angular/core';
 import { Item, ApiService } from './services/api.service';
 import { DeviceDetectorService } from 'ngx-device-detector';
+import { SwUpdate } from '@angular/service-worker';
+import { BehaviorSubject } from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -17,7 +19,7 @@ export class AppComponent implements OnInit {
 
   @HostListener('window:beforeinstallprompt', ['$event'])
 
-  onbeforeinstallprompt(e) {
+  onBeforeInstallPrompt(e) {
     console.log('teste ' + e);
     // Prevent Chrome 67 and earlier from automatically showing the prompt
     e.preventDefault();
@@ -26,10 +28,28 @@ export class AppComponent implements OnInit {
     this.showButton = true;
   }
 
-  constructor(private apiService: ApiService, private deviceService: DeviceDetectorService) { }
+  onAppInstalled(e) {
+    e.hide();
+    this.deferredPrompt = null;
+    this.showButton = false;
+    console.log('PWA was installed');
+  }
+
+
+  constructor(private apiService: ApiService, private deviceService: DeviceDetectorService, private swUpdate: SwUpdate) { 
+    // force update
+    this.swUpdate.available.subscribe((event) => {
+      window.location.reload();
+    });
+
+    window.addEventListener(
+      'beforeinstallprompt',
+      this.onBeforeInstallPrompt.bind(this)
+    );
+    window.addEventListener('appinstalled', this.onAppInstalled.bind(this));
+  }
 
   ngOnInit() {
-
     if(this.deviceService.isMobile()){
       this.showButton = true;
     } else {
