@@ -1,6 +1,6 @@
 {
   "configVersion": 1,
-  "timestamp": 1655588109832,
+  "timestamp": 1655591519094,
   "index": "/RateioJambalaya/index.html",
   "assetGroups": [
     {
@@ -13,7 +13,7 @@
       "urls": [
         "/RateioJambalaya/favicon.ico",
         "/RateioJambalaya/index.html",
-        "/RateioJambalaya/main.7ab5291181d06883.js",
+        "/RateioJambalaya/main.0b56aa627ea88064.js",
         "/RateioJambalaya/manifest.webmanifest",
         "/RateioJambalaya/polyfills.c486f6aa85eafb26.js",
         "/RateioJambalaya/runtime.c21d1a803d4fabb8.js",
@@ -54,8 +54,8 @@
     "/RateioJambalaya/assets/icons/icon-96x96.png": "3914125a4b445bf111c5627875fc190f560daa41",
     "/RateioJambalaya/assets/icons/icon-app.png": "dbdbb4d861e5ed810f6372820801f7bd6c6263c9",
     "/RateioJambalaya/favicon.ico": "22f6a4a3bcaafafb0254e0f2fa4ceb89e505e8b2",
-    "/RateioJambalaya/index.html": "5f7b5653e7e3d4cc3d74582d70d0729657aad693",
-    "/RateioJambalaya/main.7ab5291181d06883.js": "d993c9133a67fbd587637f50274750ab4e80ee39",
+    "/RateioJambalaya/index.html": "2f957c300ee1134dfccbbf838b2274aa798e418e",
+    "/RateioJambalaya/main.0b56aa627ea88064.js": "da6a1d75959e2a5b5c958c1e62e8b8d4f4e92e70",
     "/RateioJambalaya/manifest.webmanifest": "894ec5dfca56879f638949128c2a67e7ab5057da",
     "/RateioJambalaya/polyfills.c486f6aa85eafb26.js": "b34494f8f6920605eacef6028c0534e9085f5dea",
     "/RateioJambalaya/runtime.c21d1a803d4fabb8.js": "ce8b458c21db9d0af210a6820be2b2e341a6dc0c",
