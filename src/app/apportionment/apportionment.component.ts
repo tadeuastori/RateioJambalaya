@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormGroup, FormArray, FormBuilder, FormControl } from '@angular/forms';
+import { UntypedFormGroup, UntypedFormArray, UntypedFormBuilder, FormControl } from '@angular/forms';
 
 @Component({
   selector: 'app-apportionment',
@@ -10,9 +10,9 @@ export class ApportionmentComponent implements OnInit {
 
   version: string = "v2.0";
   debugMode: boolean = false;
-  apportionmentForm: FormGroup;
+  apportionmentForm: UntypedFormGroup;
 
-  constructor(private fb: FormBuilder) {  }
+  constructor(private fb: UntypedFormBuilder) {  }
 
   ngOnInit(): void {
     this.formInit();
@@ -23,7 +23,7 @@ export class ApportionmentComponent implements OnInit {
       eventos: this.fb.array([])
     })
 
-    const eventos = this.apportionmentForm.get('eventos') as FormArray;
+    const eventos = this.apportionmentForm.get('eventos') as UntypedFormArray;
 
     eventos.push(this.fb.group({
       nomeEvento: null,
@@ -36,7 +36,7 @@ export class ApportionmentComponent implements OnInit {
 
 
   getEventos() {
-    return this.apportionmentForm.get('eventos') as FormArray;
+    return this.apportionmentForm.get('eventos') as UntypedFormArray;
   }
 
   getFilteredEventos() {
@@ -44,7 +44,7 @@ export class ApportionmentComponent implements OnInit {
   }
 
   getParticipantes(index: number) {
-    return this.getEventos().at(index).get('participantes') as FormArray;
+    return this.getEventos().at(index).get('participantes') as UntypedFormArray;
   }
 
   getFilteredParticipantes(idxEvento: number) {
@@ -52,7 +52,7 @@ export class ApportionmentComponent implements OnInit {
   }
 
   getItems(idxEvento: number, idxParticipante: number){
-    return this.getParticipantes(idxEvento).at(idxParticipante).get('itemsFornecidos') as FormArray;
+    return this.getParticipantes(idxEvento).at(idxParticipante).get('itemsFornecidos') as UntypedFormArray;
   }
 
 
